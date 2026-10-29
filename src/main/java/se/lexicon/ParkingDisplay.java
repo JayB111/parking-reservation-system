@@ -3,11 +3,14 @@ package se.lexicon;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.time.format.DateTimeFormatter;
 public class ParkingDisplay {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Reservation> reservations = new ArrayList<>();
         int nextReservationId = 1;
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         ParkingSpace[] spaces = new ParkingSpace[20];
         for (int i = 0; i < spaces.length; i++) {
             spaces[i] = new ParkingSpace(i + 1);
@@ -31,7 +34,7 @@ public class ParkingDisplay {
             String input = scanner.nextLine();
             int choice;
             try {
-                choice = Integer.parseInt(input);
+                choice = Integer.parseInt(input.trim());
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a menu number.");
                 continue;
@@ -66,7 +69,8 @@ public class ParkingDisplay {
                     System.out.print("Choose a parking space (1-20): ");
                     int chosenSpace;
                     try {
-                        chosenSpace = Integer.parseInt(scanner.nextLine().trim());
+                        chosenSpace =
+                                Integer.parseInt(scanner.nextLine().trim());
                     } catch (NumberFormatException e) {
                         System.out.println("Please enter a valid number.");
                         break;
@@ -88,12 +92,28 @@ public class ParkingDisplay {
                     String phoneNumber = scanner.nextLine();
                     System.out.print("Enter your vehicle registration: ");
                     String registrationNumber = scanner.nextLine();
+                    System.out.print("How many hours do you want to park? ");
+                    int parkingDurationHours;
+                    try {
+                        parkingDurationHours =
+                                Integer.parseInt(scanner.nextLine().trim());
+                        if (parkingDurationHours <= 0) {
+                            System.out.println(
+                                    "Parking duration must be at least 1 hour.");
+                            break;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println(
+                                "Please enter a valid number of hours.");
+                        break;
+                    }
                     Reservation reservation = new Reservation(
                             nextReservationId,
                             personName,
                             phoneNumber,
                             registrationNumber,
-                            selectedSpace
+                            selectedSpace,
+                            parkingDurationHours
                     );
                     reservations.add(reservation);
                     nextReservationId++;
@@ -107,6 +127,17 @@ public class ParkingDisplay {
                             "Name: " + reservation.getPersonName());
                     System.out.println(
                             "Parking space: " + selectedSpace.getSpaceNumber());
+                    System.out.println(
+                            "Start time: "
+                                    + reservation.getStartTime().format(formatter));
+                    System.out.println(
+                            "Parking duration: "
+                                    + reservation.getParkingDurationHours()
+                                    + " hours");
+                    System.out.println(
+                            "Expected end time: "
+                                    + reservation.getExpectedEndTime()
+                                    .format(formatter));
                     break;
                 case 3:
                     System.out.println();
@@ -127,6 +158,17 @@ public class ParkingDisplay {
                             System.out.println(
                                     "Parking space: "
                                             + r.getParkingSpace().getSpaceNumber());
+                            System.out.println(
+                                    "Start time: "
+                                            + r.getStartTime().format(formatter));
+                            System.out.println(
+                                    "Parking duration: "
+                                            + r.getParkingDurationHours()
+                                            + " hours");
+                            System.out.println(
+                                    "Expected end time: "
+                                            + r.getExpectedEndTime()
+                                            .format(formatter));
                             System.out.println("----------------------------------------");
                         }
                     }
@@ -143,9 +185,10 @@ public class ParkingDisplay {
                     int completeReservation;
                     try {
                         completeReservation =
-                                Integer.parseInt(scanner.nextLine());
+                                Integer.parseInt(scanner.nextLine().trim());
                     } catch (NumberFormatException e) {
-                        System.out.println("Please enter a valid reservation ID.");
+                        System.out.println(
+                                "Please enter a valid reservation ID.");
                         break;
                     }
                     Reservation foundReservation = null;
@@ -177,7 +220,3 @@ public class ParkingDisplay {
         scanner.close();
     }
 }
-
-// Betty
-// 0701234567
-// ABC123
